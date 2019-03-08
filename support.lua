@@ -21,14 +21,13 @@ Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchas
 function Support.OnUpdate()
 	if Menu.IsEnabled(Support.optionEnabled) then
 		if Menu.IsEnabled(Support.optionEnabledPurchaseWards) then
-			Wards = NPC.GetItem(myHero, "item_ward_observer");
-			if GameRules.GetGameTime() >= TimerWards*130 then
+			if (GameRules.GetGameTime() - GameRules.GetGameStartTime()) >= TimerWards*130 then
 				Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_PURCHASE_ITEM, 42, Vector(0,0,0), 42, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
 				TimerWards=TimerWards+1;
 			end
 		end
 		if Menu.IsEnabled(Support.optionEnabledPurchaseTome) then
-			if GameRules.GetGameTime() >= TimerTome*670 then
+			if (GameRules.GetGameTime() - GameRules.GetGameStartTime()) >= TimerTome*670 then
 				Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_PURCHASE_ITEM, 257, Vector(0,0,0), 257, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
 				TimerTome=TimerTome+1;
 			end
@@ -38,15 +37,24 @@ function Support.OnUpdate()
 			if Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND) then
 				Support.DazzleGrave(Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND),Grave);
 			end
+			if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyGrave) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Grave) then
+				Support.DazzleCastGrave(Grave,myHero);
+			end
 		end
 		
     end
 end
-
+function Support.DazzleCastGrave(Grave,Target)
+	if(NPC.GetItem(myHero, "item_ultimate_scepter")) then
+		Ability.CastPosition(Grave, Entity.GetOrigin(Target), true);
+	else
+		Ability.CastTarget(Grave,Target,true);
+	end
+end
 function Support.DazzleGrave(HeroesRadius,Grave)
 	for i = 1, #HeroesRadius do
 		if ((Entity.GetMaxHealth(HeroesRadius[i])*0.01)*Menu.GetValue(Support.optionCountEnemyGrave) >= Entity.GetHealth(HeroesRadius[i])) and Entity.GetHeroesInRadius(HeroesRadius[i], 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Grave) then
-			Ability.CastTarget(Grave,HeroesRadius[i],true);
+			Support.DazzleCastGrave(Grave,HeroesRadius[i]);
 		end
 	end
 end
