@@ -18,6 +18,10 @@ Support.optionEnabledOracles = Menu.AddOptionIcon({"Support", "Oracle", "Damage 
 Support.optionEnabledOracleSave = Menu.AddOptionIcon({"Support", "Oracle", "Heal"})
 Support.optionEnabledHealOracle = Menu.AddOptionBool({"Support", "Oracle", "Heal"}, "Enabled", false)
 Support.optionEnabledOraclesHealStop = Menu.AddKeyOption({"Support", "Oracle", "Heal"}, "Stop Key", Enum.ButtonCode.KEY_F)
+Support.optionEnabledOracleItem = Menu.AddOptionIcon({"Support", "Oracle", "Heal", "Item"})
+Support.optionEnabledHealItemUrn = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Urn of Shadows", false)
+Support.optionEnabledHealItemVessel = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Spirit Vessel", false)
+Support.optionEnabledHealItemBottle = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Bottle", false)
 Support.optionEnabledOracleAutoSave = Menu.AddOptionIcon({"Support", "Oracle", "Auto Save"})
 Support.optionEnabledAutoSaveOracle = Menu.AddOptionBool({"Support", "Oracle", "Auto Save"}, "Enabled", false)
 Support.optionCountEnemyAutoSaveOracle = Menu.AddOptionSlider({"Support","Oracle", "Auto Save"}, "Health percent", 1, 99, 1)
@@ -47,7 +51,7 @@ function Support.OnUpdate()
 				TimerTome=TimerTome+1;
 			end
 		end
-		if Menu.IsEnabled(Support.optionEnabledDazzle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_dazzle") then
+		if Menu.IsEnabled(Support.optionEnabledDazzle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_dazzle") and Entity.IsAlive(myHero) then
 			Grave = NPC.GetAbility(myHero, "dazzle_shallow_grave");
 			if Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND) then
 				Support.DazzleGrave(Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND),Grave);
@@ -56,7 +60,7 @@ function Support.OnUpdate()
 				Support.DazzleCastGrave(Grave,myHero);
 			end
 		end
-		if Menu.IsEnabled(Support.optionEnabledOracle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_oracle") then
+		if Menu.IsEnabled(Support.optionEnabledOracle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_oracle") and Entity.IsAlive(myHero) then
 			Flame = NPC.GetAbility(myHero, "oracle_purifying_flames");
 			Fotuna = NPC.GetAbility(myHero, "oracle_fortunes_end");
 			Promise = NPC.GetAbility(myHero, "oracle_false_promise");
@@ -87,6 +91,7 @@ function Support.OnUpdate()
 				end
 				if TargetHeal and (Ability.SecondsSinceLastUse(Promise) < 9) then
 					if Ability.IsReady(Flame) then
+						Support.OracleHealTargetItem(TargetHeal);
 						Ability.CastTarget(Flame,TargetHeal,true);
 					end
 				end
@@ -113,6 +118,26 @@ function Support.OnUpdate()
 			end
 		end
     end
+end
+function Support.OracleHealTargetItem(Target)
+	if Menu.IsEnabled(Support.optionEnabledHealItemUrn) then
+		urn = NPC.GetItem(myHero, "item_urn_of_shadows");
+		if urn and Ability.IsReady(urn) then
+			Ability.CastTarget(urn,Target,true);
+		end
+	end
+	if Menu.IsEnabled(Support.optionEnabledHealItemVessel) then
+		vessel = NPC.GetItem(myHero, "item_spirit_vessel");
+		if vessel and Ability.IsReady(vessel) then
+			Ability.CastTarget(vessel,Target,true);
+		end
+	end
+	if Menu.IsEnabled(Support.optionEnabledHealItemBottle) then
+		Bottle = NPC.GetItem(myHero, "item_bottle");
+		if Bottle and Ability.IsReady(Bottle) then
+			Ability.CastTarget(Bottle,Target,true);
+		end
+	end
 end
 function Support.DazzleCastGrave(Grave,Target)
 	if(NPC.GetItem(myHero, "item_ultimate_scepter")) then
