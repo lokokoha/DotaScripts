@@ -60,7 +60,7 @@ function Support.OnUpdate()
 				Support.DazzleCastGrave(Grave,myHero);
 			end
 		end
-		if Menu.IsEnabled(Support.optionEnabledOracle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_oracle") and Entity.IsAlive(myHero) then
+		if Menu.IsEnabled(Support.optionEnabledOracle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_oracle") and Entity.IsAlive(myHero) and  NPC.GetMana(myHero) > 120 then
 			Flame = NPC.GetAbility(myHero, "oracle_purifying_flames");
 			Fotuna = NPC.GetAbility(myHero, "oracle_fortunes_end");
 			Promise = NPC.GetAbility(myHero, "oracle_false_promise");
@@ -78,24 +78,23 @@ function Support.OnUpdate()
 						Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Entity.GetOrigin(myHero), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero, false, false)
 					end
 				end
-				if(Ability.IsReady(Flame)) and (NPC.GetItem(myHero, "item_ultimate_scepter")) and Menu.IsEnabled(Support.optionEnabledDamageAghanimOracle) and target then
+				if(Ability.IsReady(Flame)) and (NPC.GetItem(myHero, "item_ultimate_scepter")) and Menu.IsEnabled(Support.optionEnabledDamageAghanimOracle) and target  and  NPC.GetMana(myHero) > 120 then
 					if  NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(Flame)) then
 						Ability.CastTarget(Flame,target,true);
 					end
 				end
-				--Log.Write(tostring(NPC.IsEntityInRange(myHero, target, 1000)));
 			end
 			if Menu.IsEnabled(Support.optionEnabledHealOracle) then
 				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Promise), Enum.TeamType.TEAM_FRIEND);
 				if TeamRadius  and (TargetHeal == nil)  then
 					Support.OracleHealTeam(TeamRadius,Edict,Promise,Flame);
 				end
-				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyHealOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Promise) then
+				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyHealOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Promise)  and  NPC.GetMana(myHero) > 120 then
 					TargetHeal = myHero;
 					Ability.CastTarget(Promise,TargetHeal,true);
 				end
 				if TargetHeal and (Ability.SecondsSinceLastUse(Promise) < 9) then
-					if Ability.IsReady(Flame) then
+					if Ability.IsReady(Flame)  and  NPC.GetMana(myHero) > 120 then
 						Support.OracleHealTargetItem(TargetHeal);
 						Ability.CastTarget(Flame,TargetHeal,true);
 					end
@@ -106,16 +105,16 @@ function Support.OnUpdate()
 			end
 			if Menu.IsEnabled(Support.optionEnabledAutoSaveOracle) then
 				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Edict), Enum.TeamType.TEAM_FRIEND);
-				if TeamRadius then
+				if TeamRadius  and  NPC.GetMana(myHero) > 120 then
 					Support.OracleSaveTeam(TeamRadius,Edict,Promise,Flame);
 				end
 				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyAutoSaveOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Edict) then
 					ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
 					Ghost = NPC.GetItem(myHero, "item_ghost");
-					if ethereal and Ability.IsReady(ethereal) then
+					if ethereal and Ability.IsReady(ethereal)  and  NPC.GetMana(myHero) > 120 then
 						Ability.CastTarget(ethereal,myHero,true);
 					end
-					if Ghost and Ability.IsReady(Ghost) then
+					if Ghost and Ability.IsReady(Ghost)  and  NPC.GetMana(myHero) > 120 then
 						Ability.CastNoTarget(Ghost, true);
 					end
 					Ability.CastTarget(Edict,myHero,true);
