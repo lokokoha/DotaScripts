@@ -67,18 +67,23 @@ function Support.OnUpdate()
 			Edict = NPC.GetAbility(myHero, "oracle_fates_edict");
 			if Menu.IsEnabled(Support.optionEnabledDamageOracle) and Menu.IsKeyDown(Support.optionEnabledOraclesComboDamage) then
 				target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
-				if(Ability.IsReady(Flame)) and (Ability.IsReady(Fotuna)) then
-					ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
-					if ethereal and Ability.IsReady(ethereal) then
-						Ability.CastTarget(ethereal,target,true);
+				if(Ability.IsReady(Flame)) and (Ability.IsReady(Fotuna)) and target then
+					if  NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(Flame)) then
+						ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
+						if ethereal and Ability.IsReady(ethereal) then
+							Ability.CastTarget(ethereal,target,true);
+						end
+						Ability.CastTarget(Flame,target,true);
+						Ability.CastTarget(Fotuna,target,true);
+						Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Entity.GetOrigin(myHero), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero, false, false)
 					end
-					Ability.CastTarget(Flame,target,true);
-					Ability.CastTarget(Fotuna,target,true);
-					Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Entity.GetOrigin(myHero), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero, false, false)
 				end
-				if(Ability.IsReady(Flame)) and (NPC.GetItem(myHero, "item_ultimate_scepter")) and Menu.IsEnabled(Support.optionEnabledDamageAghanimOracle) then
-					Ability.CastTarget(Flame,target,true);
+				if(Ability.IsReady(Flame)) and (NPC.GetItem(myHero, "item_ultimate_scepter")) and Menu.IsEnabled(Support.optionEnabledDamageAghanimOracle) and target then
+					if  NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(Flame)) then
+						Ability.CastTarget(Flame,target,true);
+					end
 				end
+				Log.Write(tostring(NPC.IsEntityInRange(myHero, target, 1000)));
 			end
 			if Menu.IsEnabled(Support.optionEnabledHealOracle) then
 				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Promise), Enum.TeamType.TEAM_FRIEND);
