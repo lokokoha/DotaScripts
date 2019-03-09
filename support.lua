@@ -3,13 +3,28 @@ local myHero = Heroes.GetLocal()
 local myPlayer = Players.GetLocal()
 local TimerWards = 1
 local TimerTome = 1
+local TargetHeal = nil;
 Support.optionIcon = Menu.AddOptionIcon({"Support"})
 Support.optionEnabled = Menu.AddOptionBool({"Support"}, "Enabled", false)
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto purchase"})
 Support.optionWardsIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "Wards"}, "panorama/images/items/ward_dispenser_png.vtex_c")
 Support.optionTomeIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "TOME"})
+
 Support.optionDazzleIcon = Menu.AddOptionIcon({"Support", "Dazzle"}, "panorama/images/heroes/icons/npc_dota_hero_dazzle_png.vtex_c")
+Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Oracle"}, "panorama/images/heroes/icons/npc_dota_hero_oracle_png.vtex_c")
 Support.optionEnabledDazzle = Menu.AddOptionBool({"Support", "Dazzle"}, "Enabled", false)
+Support.optionEnabledOracle = Menu.AddOptionBool({"Support", "Oracle"}, "Enabled", false)
+Support.optionEnabledOracles = Menu.AddOptionIcon({"Support", "Oracle", "Damage combo"})
+Support.optionEnabledOracleSave = Menu.AddOptionIcon({"Support", "Oracle", "Heal"})
+Support.optionEnabledHealOracle = Menu.AddOptionBool({"Support", "Oracle", "Heal"}, "Enabled", false)
+Support.optionEnabledOraclesHealStop = Menu.AddKeyOption({"Support", "Oracle", "Heal"}, "Stop Key", Enum.ButtonCode.KEY_F)
+Support.optionEnabledOracleAutoSave = Menu.AddOptionIcon({"Support", "Oracle", "Auto Save"})
+Support.optionEnabledAutoSaveOracle = Menu.AddOptionBool({"Support", "Oracle", "Auto Save"}, "Enabled", false)
+Support.optionCountEnemyAutoSaveOracle = Menu.AddOptionSlider({"Support","Oracle", "Auto Save"}, "Health percent", 1, 99, 1)
+Support.optionCountEnemyHealOracle = Menu.AddOptionSlider({"Support","Oracle", "Heal"}, "Health percent", 1, 99, 1)
+Support.optionEnabledDamageOracle = Menu.AddOptionBool({"Support", "Oracle", "Damage combo"}, "Combo Enabled", false)
+Support.optionEnabledOraclesComboDamage = Menu.AddKeyOption({"Support", "Oracle", "Damage combo"}, "Damage Key", Enum.ButtonCode.KEY_F)
+Support.optionEnabledDamageAghanimOracle = Menu.AddOptionBool({"Support", "Oracle", "Damage combo"}, "Aghanim spam cast", false)
 Support.optionDazzleGraveIcon = Menu.AddOptionIcon({"Support", "Dazzle", "Grave"}, "panorama/images/spellicons/dazzle/immortal/dazzle_shallow_grave_png.vtex_c")
 Support.optionDazzleWaveIcon = Menu.AddOptionIcon({"Support", "Dazzle", "Wave"}, "panorama/images/spellicons/dazzle/immortal/dazzle_shallow_grave_png.vtex_c")
 Support.optionCountEnemyGrave = Menu.AddOptionSlider({"Support","Dazzle", "Grave"}, "Health", 1, 99, 1)
@@ -32,7 +47,7 @@ function Support.OnUpdate()
 				TimerTome=TimerTome+1;
 			end
 		end
-		if Menu.IsEnabled(Support.optionEnabledDazzle) then
+		if Menu.IsEnabled(Support.optionEnabledDazzle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_dazzle") then
 			Grave = NPC.GetAbility(myHero, "dazzle_shallow_grave");
 			if Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND) then
 				Support.DazzleGrave(Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Grave), Enum.TeamType.TEAM_FRIEND),Grave);
@@ -41,7 +56,51 @@ function Support.OnUpdate()
 				Support.DazzleCastGrave(Grave,myHero);
 			end
 		end
-		
+		if Menu.IsEnabled(Support.optionEnabledOracle) and (NPC.GetUnitName(myHero)=="npc_dota_hero_oracle") then
+			Flame = NPC.GetAbility(myHero, "oracle_purifying_flames");
+			Fotuna = NPC.GetAbility(myHero, "oracle_fortunes_end");
+			Promise = NPC.GetAbility(myHero, "oracle_false_promise");
+			Edict = NPC.GetAbility(myHero, "oracle_fates_edict");
+			if Menu.IsEnabled(Support.optionEnabledDamageOracle) and Menu.IsKeyDown(Support.optionEnabledOraclesComboDamage) then
+				target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
+				if(Ability.IsReady(Flame)) and (Ability.IsReady(Fotuna)) then
+					ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
+					if ethereal and Ability.IsReady(ethereal) then
+						Ability.CastTarget(ethereal,target,true);
+					end
+					Ability.CastTarget(Flame,target,true);
+					Ability.CastTarget(Fotuna,target,true);
+					Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Entity.GetOrigin(myHero), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero, false, false)
+				end
+				if(Ability.IsReady(Flame)) and (NPC.GetItem(myHero, "item_ultimate_scepter")) and Menu.IsEnabled(Support.optionEnabledDamageAghanimOracle) then
+					Ability.CastTarget(Flame,target,true);
+				end
+			end
+			if Menu.IsEnabled(Support.optionEnabledHealOracle) then
+				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Promise), Enum.TeamType.TEAM_FRIEND);
+				if TeamRadius  and (TargetHeal == nil)  then
+					Support.OracleHealTeam(TeamRadius,Edict,Promise,Flame);
+				end
+				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyHealOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Promise) then
+					TargetHeal = myHero;
+					Ability.CastTarget(Promise,TargetHeal,true);
+				end
+				if TargetHeal and (Ability.SecondsSinceLastUse(Promise) < 9) then
+					if Ability.IsReady(Flame) then
+						Ability.CastTarget(Flame,TargetHeal,true);
+					end
+				end
+				if (TargetHeal and (Ability.SecondsSinceLastUse(Promise) > 9)) or (Menu.IsKeyDown(Support.optionEnabledOraclesHealStop)) then
+					TargetHeal = nil;
+				end
+			end
+			if Menu.IsEnabled(Support.optionEnabledAutoSaveOracle) then
+				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Edict), Enum.TeamType.TEAM_FRIEND);
+				if TeamRadius then
+					Support.OracleSaveTeam(TeamRadius,Edict,Promise,Flame);
+				end
+			end
+		end
     end
 end
 function Support.DazzleCastGrave(Grave,Target)
@@ -49,6 +108,25 @@ function Support.DazzleCastGrave(Grave,Target)
 		Ability.CastPosition(Grave, Entity.GetOrigin(Target), true);
 	else
 		Ability.CastTarget(Grave,Target,true);
+	end
+end
+function Support.OracleSaveTeam(HeroesRadius,Edict,Promise,Flame)
+	for i = 1, #HeroesRadius do
+		if ((Entity.GetMaxHealth(HeroesRadius[i])*0.01)*Menu.GetValue(Support.optionCountEnemyAutoSaveOracle) >= Entity.GetHealth(HeroesRadius[i])) and Entity.GetHeroesInRadius(HeroesRadius[i], 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Edict) then
+			ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
+			if ethereal and Ability.IsReady(ethereal) then
+				Ability.CastTarget(ethereal,HeroesRadius[i],true);
+			end
+			Ability.CastTarget(Edict,HeroesRadius[i],true);
+		end
+	end
+end
+function Support.OracleHealTeam(HeroesRadius,Edict,Promise,Flame)
+	for i = 1, #HeroesRadius do
+		if ((Entity.GetMaxHealth(HeroesRadius[i])*0.01)*Menu.GetValue(Support.optionCountEnemyHealOracle) >= Entity.GetHealth(HeroesRadius[i])) and Entity.GetHeroesInRadius(HeroesRadius[i], 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Promise) then
+			TargetHeal = HeroesRadius[i];
+			Ability.CastTarget(Promise,TargetHeal,true);
+		end
 	end
 end
 function Support.DazzleGrave(HeroesRadius,Grave)
