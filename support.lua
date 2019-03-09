@@ -83,7 +83,7 @@ function Support.OnUpdate()
 						Ability.CastTarget(Flame,target,true);
 					end
 				end
-				Log.Write(tostring(NPC.IsEntityInRange(myHero, target, 1000)));
+				--Log.Write(tostring(NPC.IsEntityInRange(myHero, target, 1000)));
 			end
 			if Menu.IsEnabled(Support.optionEnabledHealOracle) then
 				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Promise), Enum.TeamType.TEAM_FRIEND);
