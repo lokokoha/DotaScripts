@@ -39,6 +39,7 @@ Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchas
 
 function Support.OnUpdate()
 	if Menu.IsEnabled(Support.optionEnabled) then
+	
 		if Menu.IsEnabled(Support.optionEnabledPurchaseWards) then
 			if (GameRules.GetGameTime() - GameRules.GetGameStartTime()) >= TimerWards*130 then
 				Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_PURCHASE_ITEM, 42, Vector(0,0,0), 42, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
@@ -92,7 +93,7 @@ function Support.OnUpdate()
 			end
 			if Menu.IsEnabled(Support.optionEnabledHealOracle) then
 				TeamRadius =  Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Promise), Enum.TeamType.TEAM_FRIEND);
-				if TeamRadius  and (TargetHeal == nil)  then
+				if TeamRadius then
 					Support.OracleHealTeam(TeamRadius,Edict,Promise,Flame);
 				end
 				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyHealOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Promise) then
@@ -101,16 +102,18 @@ function Support.OnUpdate()
 						Ability.CastTarget(Promise,TargetHeal,true);
 					end
 				end
-				if TargetHeal and (Ability.SecondsSinceLastUse(Promise) < 9) then
-					if Ability.IsReady(Flame) then
-						Support.OracleHealTargetItem(TargetHeal);
-						if Ability.IsCastable(Flame, NPC.GetMana(myHero), false) then
-							Ability.CastTarget(Flame,TargetHeal,true);
+				if ((Menu.IsKeyDown(Support.optionEnabledOraclesHealStop)) or (TargetHeal and not(Entity.IsAlive(TargetHeal))) or (Menu.IsKeyDown(Support.optionEnabledOraclesComboDamage)))then
+					TargetHeal = nil;
+				end
+				if TargetHeal then
+					if NPC.GetModifier(TargetHeal, "modifier_oracle_false_promise_timer") then
+						if Ability.IsReady(Flame) then
+							Support.OracleHealTargetItem(TargetHeal);
+							if Ability.IsCastable(Flame, NPC.GetMana(myHero), true) then
+								Ability.CastTarget(Flame,TargetHeal,true);
+							end
 						end
 					end
-				end
-				if (TargetHeal and (Ability.SecondsSinceLastUse(Promise) > 9)) or (Menu.IsKeyDown(Support.optionEnabledOraclesHealStop)) or (TargetHeal and not(Entity.IsAlive(TargetHeal))) or (Menu.IsKeyDown(Support.optionEnabledOraclesComboDamage)) then
-					TargetHeal = nil;
 				end
 			end
 			if Menu.IsEnabled(Support.optionEnabledAutoSaveOracle) then
@@ -160,10 +163,10 @@ function Support.OracleHealTargetItem(Target)
 	end
 end
 function Support.DazzleCastGrave(Grave,Target)
-	if(NPC.GetItem(myHero, "item_ultimate_scepter")) then
+	if(NPC.GetItem(myHero, "item_ultimate_scepter")) and Ability.IsReady(Grave) then
 		Ability.CastPosition(Grave, Entity.GetOrigin(Target), true);
 	else
-		if Ability.IsCastable(Grave, NPC.GetMana(myHero), false) then
+		if Ability.IsCastable(Grave, NPC.GetMana(myHero), false) and Ability.IsReady(Grave) then
 			Ability.CastTarget(Grave,Target,true);
 		end
 	end
