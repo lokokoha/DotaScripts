@@ -95,7 +95,7 @@ function Support.OnUpdate()
 						Ability.CastTarget(Flame,TargetHeal,true);
 					end
 				end
-				if (TargetHeal and (Ability.SecondsSinceLastUse(Promise) > 9)) or (Menu.IsKeyDown(Support.optionEnabledOraclesHealStop)) then
+				if (TargetHeal and (Ability.SecondsSinceLastUse(Promise) > 9)) or (Menu.IsKeyDown(Support.optionEnabledOraclesHealStop)) or (not Entity.IsAlive(TargetHeal)) or (Menu.IsKeyDown(Support.optionEnabledOraclesComboDamage)) then
 					TargetHeal = nil;
 				end
 			end
@@ -134,7 +134,7 @@ function Support.OracleHealTargetItem(Target)
 	end
 	if Menu.IsEnabled(Support.optionEnabledHealItemBottle) then
 		Bottle = NPC.GetItem(myHero, "item_bottle");
-		if Bottle and Ability.IsReady(Bottle) then
+		if Bottle and Ability.IsReady(Bottle) and (Ability.SecondsSinceLastUse(Bottle) > 2.5) then
 			Ability.CastTarget(Bottle,Target,true);
 		end
 	end
