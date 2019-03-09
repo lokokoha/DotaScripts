@@ -99,6 +99,17 @@ function Support.OnUpdate()
 				if TeamRadius then
 					Support.OracleSaveTeam(TeamRadius,Edict,Promise,Flame);
 				end
+				if ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyAutoSaveOracle) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) and Ability.IsReady(Edict) then
+					ethereal = NPC.GetItem(myHero, "item_ethereal_blade");
+					Ghost = NPC.GetItem(myHero, "item_ghost");
+					if ethereal and Ability.IsReady(ethereal) then
+						Ability.CastTarget(ethereal,myHero,true);
+					end
+					if Ghost and Ability.IsReady(Ghost) then
+						Ability.CastNoTarget(Ghost, true);
+					end
+					Ability.CastTarget(Edict,myHero,true);
+				end
 			end
 		end
     end
