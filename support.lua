@@ -22,6 +22,7 @@ Support.optionEnabledOracleItem = Menu.AddOptionIcon({"Support", "Oracle", "Heal
 Support.optionEnabledHealItemUrn = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Urn of Shadows", false)
 Support.optionEnabledHealItemVessel = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Spirit Vessel", false)
 Support.optionEnabledHealItemBottle = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Bottle", false)
+Support.optionEnabledHealItemSalve = Menu.AddOptionBool({"Support", "Oracle", "Heal", "Item"}, "Salve", false)
 Support.optionEnabledOracleAutoSave = Menu.AddOptionIcon({"Support", "Oracle", "Auto Save"})
 Support.optionEnabledAutoSaveOracle = Menu.AddOptionBool({"Support", "Oracle", "Auto Save"}, "Enabled", false)
 Support.optionCountEnemyAutoSaveOracle = Menu.AddOptionSlider({"Support","Oracle", "Auto Save"}, "Health percent", 1, 99, 1)
@@ -145,20 +146,26 @@ end
 function Support.OracleHealTargetItem(Target)
 	if Menu.IsEnabled(Support.optionEnabledHealItemUrn) then
 		urn = NPC.GetItem(myHero, "item_urn_of_shadows");
-		if urn and Ability.IsReady(urn) and Ability.IsCastable(urn, NPC.GetMana(myHero), false) then
+		if urn and Ability.IsReady(urn) and Ability.IsCastable(urn, NPC.GetMana(myHero), false) and (Item.GetCurrentCharges(urn) >= 1) then
 			Ability.CastTarget(urn,Target,true);
 		end
 	end
 	if Menu.IsEnabled(Support.optionEnabledHealItemVessel) then
 		vessel = NPC.GetItem(myHero, "item_spirit_vessel");
-		if vessel and Ability.IsReady(vessel) and Ability.IsCastable(vessel, NPC.GetMana(myHero), false) then
+		if vessel and Ability.IsReady(vessel) and Ability.IsCastable(vessel, NPC.GetMana(myHero), false) and (Item.GetCurrentCharges(vessel) >= 1) then
 			Ability.CastTarget(vessel,Target,true);
 		end
 	end
-	if Menu.IsEnabled(Support.optionEnabledHealItemBottle) then
+	if Menu.IsEnabled(Support.optionEnabledHealItemBottle)then
 		Bottle = NPC.GetItem(myHero, "item_bottle");
-		if Bottle and Ability.IsReady(Bottle) and not(NPC.HasModifier(Target, 'modifier_bottle_regeneration')) and Ability.IsCastable(Bottle, NPC.GetMana(myHero), false) then
+		if Bottle and Ability.IsReady(Bottle) and not(NPC.HasModifier(Target, 'modifier_bottle_regeneration')) and Ability.IsCastable(Bottle, NPC.GetMana(myHero), false) and (Item.GetCurrentCharges(Bottle) >= 1) then
 			Ability.CastTarget(Bottle,Target,true);
+		end
+	end
+	if Menu.IsEnabled(Support.optionEnabledHealItemSalve)then
+		Salve = NPC.GetItem(myHero, "item_flask");
+		if Salve and Ability.IsReady(Salve) and not(NPC.HasModifier(Target, 'modifier_flask_healing')) then
+			Ability.CastTarget(Salve,Target,true);
 		end
 	end
 end
