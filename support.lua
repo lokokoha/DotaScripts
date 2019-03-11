@@ -12,8 +12,17 @@ Support.optionTomeIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "TOME"}
 
 Support.optionDazzleIcon = Menu.AddOptionIcon({"Support", "Dazzle"}, "panorama/images/heroes/icons/npc_dota_hero_dazzle_png.vtex_c")
 Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Oracle"}, "panorama/images/heroes/icons/npc_dota_hero_oracle_png.vtex_c")
+Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Doctor"}, "panorama/images/heroes/icons/npc_dota_hero_witch_doctor_png.vtex_c")
 Support.optionEnabledDazzle = Menu.AddOptionBool({"Support", "Dazzle"}, "Enabled", false)
 Support.optionEnabledOracle = Menu.AddOptionBool({"Support", "Oracle"}, "Enabled", false)
+Support.optionEnabledDoctor = Menu.AddOptionBool({"Support", "Doctor"}, "Enabled", false)
+Support.optionDoctorDamageCombo = Menu.AddOptionIcon({"Support", "Doctor", "Damage combo"})
+Support.optionEnabledDoctorDamageCombo = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Enabled", false)
+Support.optionEnabledDoctorDamageComboKey = Menu.AddKeyOption({"Support", "Doctor", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F)
+Support.optionDoctorDamageComboItem = Menu.AddOptionIcon({"Support", "Doctor", "Damage combo", "Item"})
+Support.optionEnabledDoctorDamageComboItemUrn = Menu.AddOptionBool({"Support", "Doctor", "Damage combo", "Item"}, "Urn of Shadows", false)
+Support.optionEnabledDoctorDamageComboItemVessel = Menu.AddOptionBool({"Support", "Doctor", "Damage combo", "Item"}, "Spirit Vessel", false)
+Support.optionEnabledDoctorDamageComboItemGlimer = Menu.AddOptionBool({"Support", "Doctor", "Damage combo", "Item"}, "Glimmer", false)
 Support.optionEnabledOracles = Menu.AddOptionIcon({"Support", "Oracle", "Damage combo"})
 Support.optionEnabledOracleSave = Menu.AddOptionIcon({"Support", "Oracle", "Heal"})
 Support.optionEnabledHealOracle = Menu.AddOptionBool({"Support", "Oracle", "Heal"}, "Enabled", false)
@@ -137,6 +146,52 @@ function Support.OnUpdate()
 					end
 					if Ability.IsCastable(Edict, NPC.GetMana(myHero), false) then
 						Ability.CastTarget(Edict,myHero,true);
+					end
+				end
+			end
+		end
+		if Menu.IsEnabled(Support.optionEnabledDoctor) and (NPC.GetUnitName(myHero)=="npc_dota_hero_witch_doctor") and Entity.IsAlive(myHero) then
+			Caska = NPC.GetAbility(myHero, "witch_doctor_paralyzing_cask");
+			Voodoo = NPC.GetAbility(myHero, "witch_doctor_voodoo_restoration");
+			Maledict = NPC.GetAbility(myHero, "witch_doctor_maledict");
+			Ward = NPC.GetAbility(myHero, "witch_doctor_death_ward");
+			if Menu.IsEnabled(Support.optionEnabledDoctorDamageCombo) and Menu.IsKeyDown(Support.optionEnabledDoctorDamageComboKey) then
+				target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
+				if Ability.IsReady(Ward) and target and NPC.GetModifier(target, "modifier_maledict_dot") then
+					if Ability.IsCastable(Ward, NPC.GetMana(myHero), false) then
+						if Heroes.InRadius(Entity.GetOrigin(target), 180, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+							Ability.CastPosition(Ward, Entity.GetOrigin(target), true);
+						end
+					end
+					if Menu.IsEnabled(Support.optionEnabledDoctorDamageComboItemGlimer) then
+						Glimmer = NPC.GetItem(myHero, "item_glimmer_cape");
+						if Glimmer and Ability.IsReady(Glimmer) and Ability.IsCastable(Glimmer, NPC.GetMana(myHero), false) then
+							Ability.CastTarget(Glimmer,myHero,true);
+						end
+					end
+				end
+				if(Ability.IsReady(Caska)) and (Ability.IsReady(Maledict)) and (Ability.IsReady(Ward)) and target  and not(NPC.GetModifier(target, "modifier_maledict_dot")) and not(NPC.IsChannellingAbility(myHero)) then
+					if  NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(Maledict)) then
+						if Ability.IsCastable(Caska, NPC.GetMana(myHero), false) then
+							Ability.CastTarget(Caska,target,true);
+						end
+						if Ability.IsCastable(Maledict, NPC.GetMana(myHero), false) then
+							if Heroes.InRadius(Entity.GetOrigin(target), 180, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+								Ability.CastPosition(Maledict, Entity.GetOrigin(target), true);
+							end
+						end
+						if Menu.IsEnabled(Support.optionEnabledDoctorDamageComboItemUrn) then
+							urn = NPC.GetItem(myHero, "item_urn_of_shadows");
+							if urn and Ability.IsReady(urn) and Ability.IsCastable(urn, NPC.GetMana(myHero), false) and (Item.GetCurrentCharges(urn) >= 1) then
+								Ability.CastTarget(urn,target,true);
+							end
+						end
+						if Menu.IsEnabled(Support.optionEnabledDoctorDamageComboItemVessel) then
+							vessel = NPC.GetItem(myHero, "item_spirit_vessel");
+							if vessel and Ability.IsReady(vessel) and Ability.IsCastable(vessel, NPC.GetMana(myHero), false) and (Item.GetCurrentCharges(vessel) >= 1) then
+								Ability.CastTarget(vessel,target,true);
+							end
+						end
 					end
 				end
 			end
