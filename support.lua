@@ -3,13 +3,16 @@ local myHero = Heroes.GetLocal()
 local myPlayer = Players.GetLocal()
 local TimerWards = 1
 local TimerTome = 1
+local cheker = 0
 local TargetHeal = nil;
 Support.optionIcon = Menu.AddOptionIcon({"Support"})
 Support.optionEnabled = Menu.AddOptionBool({"Support"}, "Enabled", false)
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto purchase"})
+Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto broadcast"})
+Support.optionEnabledAnnounceStack = Menu.AddOptionBool({"Support", "Auto broadcast"}, "Announce Stack", false)
+Support.optionAnnounceVolume = Menu.AddOptionSlider({"Support","Auto broadcast"}, "Volume", 1, 100, 10);
 Support.optionWardsIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "Wards"}, "panorama/images/items/ward_dispenser_png.vtex_c")
 Support.optionTomeIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "TOME"})
-
 Support.optionDazzleIcon = Menu.AddOptionIcon({"Support", "Dazzle"}, "panorama/images/heroes/icons/npc_dota_hero_dazzle_png.vtex_c")
 Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Oracle"}, "panorama/images/heroes/icons/npc_dota_hero_oracle_png.vtex_c")
 Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Doctor"}, "panorama/images/heroes/icons/npc_dota_hero_witch_doctor_png.vtex_c")
@@ -59,6 +62,30 @@ Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchas
 function Support.OnUpdate()
 	if Menu.IsEnabled(Support.optionEnabled) then
 	
+		if Menu.IsEnabled(Support.optionEnabledAnnounceStack) then
+			GameTime=(GameRules.GetGameTime() - GameRules.GetGameStartTime())/60;
+			GameTime=GameTime-math.modf(GameTime);
+			if (GameTime>0.67) then
+				if (cheker==0) then
+					cheker=1;
+					Engine.ExecuteCommand('playvol sounds/diagnostics/bell ' .. tostring(Menu.GetValue(Support.optionAnnounceVolume) * 0.01 ));
+				end
+			else
+				cheker=0;
+			end
+			if (GameTime>0.69) then
+				if (cheker==1) then
+					cheker=2;
+					Engine.ExecuteCommand('playvol sounds/diagnostics/bell ' .. tostring(Menu.GetValue(Support.optionAnnounceVolume) * 0.01 ));
+				end
+			end
+			if (GameTime>0.71) then
+				if (cheker==2) then
+					cheker=3;
+					Engine.ExecuteCommand('playvol sounds/diagnostics/bell ' .. tostring(Menu.GetValue(Support.optionAnnounceVolume) * 0.01 ));
+				end
+			end
+		end
 		if Menu.IsEnabled(Support.optionEnabledPurchaseWards) then
 			if (GameRules.GetGameTime() - GameRules.GetGameStartTime()) >= TimerWards*130 then
 				Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_PURCHASE_ITEM, 42, Vector(0,0,0), 42, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
