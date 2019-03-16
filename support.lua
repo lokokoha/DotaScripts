@@ -7,6 +7,7 @@ local cheker = 0
 local TargetHeal = nil;
 Support.optionIcon = Menu.AddOptionIcon({"Support"})
 Support.optionEnabled = Menu.AddOptionBool({"Support"}, "Enabled", false)
+Support.optionEnabledTowerCloseTarget = Menu.AddOptionBool({"Support"}, "Target Tower", false)
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto purchase"})
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto broadcast"})
 Support.optionEnabledAnnounceStack = Menu.AddOptionBool({"Support", "Auto broadcast"}, "Announce Stack", false)
@@ -54,7 +55,6 @@ Support.optionEnabledDamageAghanimOracle = Menu.AddOptionBool({"Support", "Oracl
 Support.optionDazzleGraveIcon = Menu.AddOptionIcon({"Support", "Dazzle", "Grave"}, "panorama/images/spellicons/dazzle/immortal/dazzle_shallow_grave_png.vtex_c")
 Support.optionDazzleWaveIcon = Menu.AddOptionIcon({"Support", "Dazzle", "Wave"}, "panorama/images/spellicons/dazzle/immortal/dazzle_shallow_grave_png.vtex_c")
 Support.optionCountEnemyGrave = Menu.AddOptionSlider({"Support","Dazzle", "Grave"}, "Health", 1, 99, 1)
-
 Support.optionEnabledPurchaseWards = Menu.AddOptionBool({"Support", "Auto purchase", "Wards"}, "Enabled", false)
 Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchase", "TOME"}, "Enabled", false)
 
@@ -62,6 +62,22 @@ Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchas
 function Support.OnUpdate()
 	if Menu.IsEnabled(Support.optionEnabled) then
 	
+		if Menu.IsEnabled(Support.optionEnabledTowerCloseTarget) then
+			tower=Towers.InRadius(Entity.GetOrigin(myHero), 400, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
+			if tower then
+				if (Tower.GetAttackTarget(tower[1])==myHero) then
+					target=Entity.GetUnitsInRadius(myHero, 300, Enum.TeamType.TEAM_FRIEND);
+					if target then
+						for i = 1, #target do
+							if not Entity.IsHero(target[i]) then
+								Player.PrepareUnitOrders(myPlayer, Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET, target[i], Vector(0,0,0), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY, myHero);
+								break;
+							end
+						end
+					end
+				end
+			end
+		end
 		if Menu.IsEnabled(Support.optionEnabledAnnounceStack) then
 			GameTime=(GameRules.GetGameTime() - GameRules.GetGameStartTime())/60;
 			GameTime=GameTime-math.modf(GameTime);
