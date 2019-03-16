@@ -10,6 +10,12 @@ Support.optionEnabled = Menu.AddOptionBool({"Support"}, "Enabled", false)
 Support.optionEnabledTowerCloseTarget = Menu.AddOptionBool({"Support"}, "Target Tower", false)
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto purchase"})
 Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto broadcast"})
+Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto Devard"})
+Support.optionEnabledAutoDevard = Menu.AddOptionBool({"Support", "Auto Devard"}, "Enabled", false)
+Support.optionPurchaseIcon = Menu.AddOptionIcon({"Support", "Auto Devard", "Item"})
+Support.optionEnabledAutoDevardItemTango = Menu.AddOptionBool({"Support", "Auto Devard", "Item"}, "Tango", false)
+Support.optionEnabledAutoDevardItemBlade = Menu.AddOptionBool({"Support", "Auto Devard", "Item"}, "Blade", false)
+Support.optionEnabledAutoDevardItemBfury = Menu.AddOptionBool({"Support", "Auto Devard", "Item"}, "Bfury", false)
 Support.optionEnabledAnnounceStack = Menu.AddOptionBool({"Support", "Auto broadcast"}, "Announce Stack", false)
 Support.optionAnnounceVolume = Menu.AddOptionSlider({"Support","Auto broadcast"}, "Volume", 1, 100, 10);
 Support.optionWardsIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "Wards"}, "panorama/images/items/ward_dispenser_png.vtex_c")
@@ -31,6 +37,7 @@ Support.optionEnabledWillowSave = Menu.AddOptionBool({"Support", "Dark Willow", 
 Support.optionCountEnemyWillowSave = Menu.AddOptionSlider({"Support","Dark Willow", "Save"}, "Save percent", 1, 99, 1)
 Support.optionEnabledWillowDamageComboKey = Menu.AddKeyOption({"Support", "Dark Willow", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F)
 Support.optionEnabledDoctorDamageCombo = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Enabled", false)
+Support.optionEnabledDoctorDamageComboWard = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Use Ward in combo?", false)
 Support.optionEnabledDoctorDamageComboKey = Menu.AddKeyOption({"Support", "Doctor", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F)
 Support.optionDoctorDamageComboItem = Menu.AddOptionIcon({"Support", "Doctor", "Damage combo", "Item"})
 Support.optionEnabledDoctorDamageComboItemUrn = Menu.AddOptionBool({"Support", "Doctor", "Damage combo", "Item"}, "Urn of Shadows", false)
@@ -62,6 +69,29 @@ Support.optionEnabledPurchaseTome = Menu.AddOptionBool({"Support", "Auto purchas
 function Support.OnUpdate()
 	if Menu.IsEnabled(Support.optionEnabled) then
 	
+		if Menu.IsEnabled(Support.optionEnabledAutoDevard) then
+			if NPC.GetItem(myHero, "item_quelling_blade") and Menu.IsEnabled(Support.optionEnabledAutoDevardItemBlade) then
+				item = NPC.GetItem(myHero, "item_quelling_blade");
+			elseif NPC.GetItem(myHero, "item_bfury") and Menu.IsEnabled(Support.optionEnabledAutoDevardItemBfury) then
+				item = NPC.GetItem(myHero, "item_bfury");
+			elseif NPC.GetItem(myHero, "item_tango") and Menu.IsEnabled(Support.optionEnabledAutoDevardItemTango) then
+				item = NPC.GetItem(myHero, "item_tango");
+			end
+			if item then
+				if Ability.IsReady(item) then
+					ward=Entity.GetUnitsInRadius(myHero, Ability.GetCastRange(item), Enum.TeamType.TEAM_ENEMY);
+					if ward then
+						for i = 1, #ward do
+							name=NPC.GetUnitName(ward[i]);
+							if (name=="npc_dota_observer_wards") or (name=="npc_dota_sentry_wards")then
+								Ability.CastTarget(item,ward[i],true);
+								break;
+							end
+						end
+					end
+				end
+			end
+		end
 		if Menu.IsEnabled(Support.optionEnabledTowerCloseTarget) then
 			tower=Towers.InRadius(Entity.GetOrigin(myHero), 400, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
 			if tower then
@@ -209,7 +239,7 @@ function Support.OnUpdate()
 			Ward = NPC.GetAbility(myHero, "witch_doctor_death_ward");
 			if Menu.IsEnabled(Support.optionEnabledDoctorDamageCombo) and Menu.IsKeyDown(Support.optionEnabledDoctorDamageComboKey) then
 				target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
-				if Ability.IsReady(Ward) and target and NPC.GetModifier(target, "modifier_maledict_dot") then
+				if Ability.IsReady(Ward) and target and NPC.GetModifier(target, "modifier_maledict_dot") and Menu.IsEnabled(Support.optionEnabledDoctorDamageComboWard) then
 					if Ability.IsCastable(Ward, NPC.GetMana(myHero), false) then
 						if Heroes.InRadius(Entity.GetOrigin(target), 180, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
 							Ability.CastPosition(Ward, Entity.GetOrigin(target), true);
@@ -222,7 +252,7 @@ function Support.OnUpdate()
 						end
 					end
 				end
-				if(Ability.IsReady(Caska)) and (Ability.IsReady(Maledict)) and (Ability.IsReady(Ward)) and target  and not(NPC.GetModifier(target, "modifier_maledict_dot")) and not(NPC.IsChannellingAbility(myHero)) then
+				if(Ability.IsReady(Caska)) and (Ability.IsReady(Maledict)) and target  and not(NPC.GetModifier(target, "modifier_maledict_dot")) and not(NPC.IsChannellingAbility(myHero)) then
 					if  NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(Maledict)) then
 						if Ability.IsCastable(Caska, NPC.GetMana(myHero), false) then
 							Ability.CastTarget(Caska,target,true);
