@@ -13,10 +13,19 @@ Support.optionTomeIcon = Menu.AddOptionIcon({"Support", "Auto purchase", "TOME"}
 Support.optionDazzleIcon = Menu.AddOptionIcon({"Support", "Dazzle"}, "panorama/images/heroes/icons/npc_dota_hero_dazzle_png.vtex_c")
 Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Oracle"}, "panorama/images/heroes/icons/npc_dota_hero_oracle_png.vtex_c")
 Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Doctor"}, "panorama/images/heroes/icons/npc_dota_hero_witch_doctor_png.vtex_c")
+Support.optionOracleIcon = Menu.AddOptionIcon({"Support", "Dark Willow"}, "panorama/images/heroes/icons/npc_dota_hero_dark_willow_png.vtex_c")
 Support.optionEnabledDazzle = Menu.AddOptionBool({"Support", "Dazzle"}, "Enabled", false)
 Support.optionEnabledOracle = Menu.AddOptionBool({"Support", "Oracle"}, "Enabled", false)
 Support.optionEnabledDoctor = Menu.AddOptionBool({"Support", "Doctor"}, "Enabled", false)
+Support.optionEnabledWillow = Menu.AddOptionBool({"Support", "Dark Willow"}, "Enabled", false)
+Support.optionDoctorDamageCombo = Menu.AddOptionIcon({"Support", "Dark Willow", "Damage combo"})
+Support.optionDoctorDamageCombo = Menu.AddOptionIcon({"Support", "Dark Willow", "Save"})
 Support.optionDoctorDamageCombo = Menu.AddOptionIcon({"Support", "Doctor", "Damage combo"})
+Support.optionEnabledWillowDamageCombo = Menu.AddOptionBool({"Support", "Dark Willow", "Damage combo"}, "Enabled", false)
+Support.optionEnabledWillowDamageComboRealm = Menu.AddOptionBool({"Support", "Dark Willow", "Damage combo"}, "Use Realm Combo", false)
+Support.optionEnabledWillowSave = Menu.AddOptionBool({"Support", "Dark Willow", "Save"}, "Enabled", false)
+Support.optionCountEnemyWillowSave = Menu.AddOptionSlider({"Support","Dark Willow", "Save"}, "Save percent", 1, 99, 1)
+Support.optionEnabledWillowDamageComboKey = Menu.AddKeyOption({"Support", "Dark Willow", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F)
 Support.optionEnabledDoctorDamageCombo = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Enabled", false)
 Support.optionEnabledDoctorDamageComboKey = Menu.AddKeyOption({"Support", "Doctor", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F)
 Support.optionDoctorDamageComboItem = Menu.AddOptionIcon({"Support", "Doctor", "Damage combo", "Item"})
@@ -193,6 +202,41 @@ function Support.OnUpdate()
 							end
 						end
 					end
+				end
+			end
+		end
+		if Menu.IsEnabled(Support.optionEnabledWillow) and (NPC.GetUnitName(myHero)=="npc_dota_hero_dark_willow") and Entity.IsAlive(myHero) then
+			Maze = NPC.GetAbility(myHero, "dark_willow_bramble_maze");
+			Realm = NPC.GetAbility(myHero, "dark_willow_shadow_realm");
+			Crown = NPC.GetAbility(myHero, "dark_willow_cursed_crown");
+			Bedlam = NPC.GetAbility(myHero, "dark_willow_bedlam");
+			Terrorize = NPC.GetAbility(myHero, "dark_willow_terrorize");
+			if Menu.IsEnabled(Support.optionEnabledWillowDamageCombo) and Menu.IsKeyDown(Support.optionEnabledWillowDamageComboKey) then
+				target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
+				if Ability.IsCastable(Maze, NPC.GetMana(myHero), false) then
+					if Heroes.InRadius(Entity.GetOrigin(target), 600, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+						Ability.CastPosition(Maze, Entity.GetOrigin(target), true);
+					end
+				end
+				if Ability.IsCastable(Crown, NPC.GetMana(myHero), false) then
+					if Heroes.InRadius(Entity.GetOrigin(target), 600, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+						Ability.CastTarget(Crown,target,true);
+					end
+				end
+				if Ability.IsCastable(Bedlam, NPC.GetMana(myHero), false) then
+					if Heroes.InRadius(Entity.GetOrigin(target), 200, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+						Ability.CastNoTarget(Bedlam, true);
+					end
+				end
+				if Ability.IsCastable(Realm, NPC.GetMana(myHero), false) and Menu.IsEnabled(Support.optionEnabledWillowDamageComboRealm) then
+					if Heroes.InRadius(Entity.GetOrigin(target), 200, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+						Ability.CastNoTarget(Realm, true);
+					end
+				end
+			end
+			if Menu.IsEnabled(Support.optionEnabledWillowSave) and ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyWillowSave) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) then
+				if Ability.IsCastable(Realm, NPC.GetMana(myHero), false) then
+					Ability.CastNoTarget(Realm, true);
 				end
 			end
 		end
