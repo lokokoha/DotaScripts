@@ -100,13 +100,32 @@ Height = math.floor(Height/5*3);
 			-- End Update 1s
 			if Menu.IsKeyDown(CustomCombo.optionComboKey) then
 				local target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
-				if #CastSpellList > 0 then
-					for i = 1, #CastSpellList do
-						if NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(CastSpellList[i].spell)) then
-							CustomCombo.CastDamageSpell(CastSpellList[i].spell,target,CastSpellList[i].target);
+				if target then
+					if not(ChannelSpell) then
+						if #CastSpellList > 0 then
+							for i = 1, #CastSpellList do
+								if CastSpellList[i].target < 3 then 
+									if NPC.IsEntityInRange(myHero, target, Ability.GetCastRange(CastSpellList[i].spell)) then
+										 CustomCombo.CastDamageSpell(CastSpellList[i].spell,target,CastSpellList[i].target);
+										if CastSpellList[i].channeled then
+											if Ability.IsChannelling(CastSpellList[i].spell) then
+												ChannelSpell = CastSpellList[i].spell;
+												break;
+											end
+										end
+									end
+								else
+									CustomCombo.CastDamageSpell(CastSpellList[i].spell,target,CastSpellList[i].target);
+								end
+							end
+						end
+					else
+						if not(Ability.IsChannelling(ChannelSpell)) then
+							ChannelSpell = false;
 						end
 					end
 				end
+				Log.Write(ChannelSpell)
 			end
 		end
 	end
@@ -146,10 +165,10 @@ Height = math.floor(Height/5*3);
 						if Ability.GetTargetType(item)==Enum.TargetType.DOTA_UNIT_TARGET_NONE then
 							targets = 2;
 						end
-						if Ability.GetBehavior(item)==Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_NO_TARGET then
+						if CustomCombo.ChekerAbilityType(Ability.GetBehavior(item), Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
 							targets = 3;
 						end
-						ItemList[#ItemList+1]={spell = item, icon = Renderer.LoadImage("panorama/images/items/guardian_greaves_png.vtex_c"), status = false, position = 0, target = targets, channeled = false};
+						ItemList[#ItemList+1]={spell = item, icon = Renderer.LoadImage("panorama/images/items/"..string.sub(Ability.GetName(item) ,string.len("item_") + 1).."_png.vtex_c"), status = false, position = 0, target = targets, channeled = false};
 					end
 				end
 			end
@@ -169,16 +188,16 @@ Height = math.floor(Height/5*3);
 						end
 					end
 					if Cheker then
-						local targets = 1;
-						local channeled = true;
 						
-						if (Ability.GetBehavior(Spell[i]) == Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_CHANNELLED) then
+						local targets = 1;
+						local channeled = false;
+						if CustomCombo.ChekerAbilityType(Ability.GetBehavior(Spell[i]), Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_CHANNELLED) then
 							channeled = true;
 						end
 						if Ability.GetTargetType(Spell[i])==Enum.TargetType.DOTA_UNIT_TARGET_NONE then
 							targets = 2;
 						end
-						if Ability.GetBehavior(Spell[i])==Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_NO_TARGET then
+						if CustomCombo.ChekerAbilityType(Ability.GetBehavior(Spell[i]), Enum.AbilityBehavior.DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
 							targets = 3;
 						end
 						SpellList[#SpellList+1]={spell = Spell[i], icon = Renderer.LoadImage("panorama/images/spellicons/"..Ability.GetName(Spell[i]).."_png.vtex_c"), status = false, position = 0, target = targets, channeled = channeled};
@@ -188,5 +207,20 @@ Height = math.floor(Height/5*3);
 		end
 	end
 	-- End Get Spell
+	-- Cheker AbilityBehavior
+	function CustomCombo.ChekerAbilityType(a,b)
+		local flag = false;
+		while a ~= 0 do
+			local c = 2^math.floor(math.log(a,2))
+			if (b ~= c) then
+				a = a - c
+			else
+				flag = true;
+				return flag
+			end
+		end
+		return flag
+	end
+	-- End Cheker AbilityBehavior
 -- End Content
 return CustomCombo
