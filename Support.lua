@@ -29,83 +29,62 @@ SupportItemList[10] = {name = "item_bloodthorn", status = false, item = nil, tar
 SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil, target = true, active = false, image = Renderer.LoadImage("panorama/images/items/heavens_halberd_png.vtex_c"), hero={}};
 
 -- Menu
-	Support.optionIcon = Menu.AddMenuIcon({"Support"}, "")
-	Support.optionEnabled = Menu.AddOptionBool({"Support"}, "Enabled", false)
-	Support.optionAntiPauseEnabled = Menu.AddOptionBool({"Support"}, "Anti pause", false)
+	Support.optionEnabled = Menu.AddOptionBool({"Поддержка"}, "Включить", false)
+	Menu.AddMenuIcon({"Поддержка"}, "~/MenuIcons/Dota/preview_ward.png")
+	Menu.AddOptionIcon(Support.optionEnabled, "~/MenuIcons/Enable/enable_check_round.png")
 	-- Menu Item Save
-		Support.optionEnabledItemSave = Menu.AddOptionBool({"Support", "Item Save"}, "Enabled", false);
-		Support.optionEnabledItemSaveUrn = Menu.AddOptionBool({"Support", "Item Save", "Urn of Shadows"}, "Enabled", false);
-		Support.optionItemSaveVolumeUrn = Menu.AddOptionSlider({"Support", "Item Save","Urn of Shadows"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveVessel = Menu.AddOptionBool({"Support", "Item Save", "Spirit Vessel"}, "Enabled", false);
-		Support.optionItemSaveVolumeVessel = Menu.AddOptionSlider({"Support", "Item Save","Spirit Vessel"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveBottle = Menu.AddOptionBool({"Support", "Item Save", "Bottle"}, "Enabled", false);
-		Support.optionItemSaveVolumeBottle = Menu.AddOptionSlider({"Support", "Item Save","Bottle"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveGlimmer = Menu.AddOptionBool({"Support", "Item Save", "Glimmer"}, "Enabled", false);
-		Support.optionItemSaveVolumeGlimmer = Menu.AddOptionSlider({"Support", "Item Save","Glimmer"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveSolarCrest = Menu.AddOptionBool({"Support", "Item Save", "Solar Crest"}, "Enabled", false);
-		Support.optionItemSaveVolumeSolarCrest = Menu.AddOptionSlider({"Support", "Item Save","Solar Crest"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveMekansm = Menu.AddOptionBool({"Support", "Item Save", "Mekansm"}, "Enabled", false);
-		Support.optionItemSaveVolumeMekansm = Menu.AddOptionSlider({"Support", "Item Save","Mekansm"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSaveGuardianGreaves = Menu.AddOptionBool({"Support", "Item Save", "Guardian Geaves"}, "Enabled", false);
-		Support.optionItemSaveVolumeGuardianGreaves = Menu.AddOptionSlider({"Support", "Item Save","Guardian Geaves"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSavelinkenSphere = Menu.AddOptionBool({"Support", "Item Save", "linken's sphere"}, "Enabled", false);
-		Support.optionItemSaveVolumeSphere = Menu.AddOptionSlider({"Support", "Item Save","linken's sphere"}, "Volume HP", 1, 100, 10);
-		Support.optionEnabledItemSavelotus = Menu.AddOptionBool({"Support", "Item Save", "lotus orb"}, "Enabled", false);
-		Support.optionItemSaveVolumelotus = Menu.AddOptionSlider({"Support", "Item Save","lotus orb"}, "Volume HP", 1, 100, 10);
+		Support.optionEnabledItemSave = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами"}, "Включить", false);
+		Support.optionEnabledItemSaveUrn = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Urn of Shadows"}, "Включить", false);
+		Support.optionItemSaveVolumeUrn = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Urn of Shadows"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveVessel = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Spirit Vessel"}, "Включить", false);
+		Support.optionItemSaveVolumeVessel = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Spirit Vessel"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveBottle = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Bottle"}, "Включить", false);
+		Support.optionItemSaveVolumeBottle = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Bottle"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveGlimmer = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Glimmer"}, "Включить", false);
+		Support.optionItemSaveVolumeGlimmer = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Glimmer"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveSolarCrest = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Solar Crest"}, "Включить", false);
+		Support.optionItemSaveVolumeSolarCrest = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Solar Crest"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveMekansm = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Mekansm"}, "Включить", false);
+		Support.optionItemSaveVolumeMekansm = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Mekansm"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSaveGuardianGreaves = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "Guardian Geaves"}, "Включить", false);
+		Support.optionItemSaveVolumeGuardianGreaves = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","Guardian Geaves"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSavelinkenSphere = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "linken's sphere"}, "Включить", false);
+		Support.optionItemSaveVolumeSphere = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","linken's sphere"}, "Процент здоровья", 1, 100, 10);
+		Support.optionEnabledItemSavelotus = Menu.AddOptionBool({"Поддержка", "Авто спасение предметами", "lotus orb"}, "Включить", false);
+		Support.optionItemSaveVolumelotus = Menu.AddOptionSlider({"Поддержка", "Авто спасение предметами","lotus orb"}, "Процент здоровья", 1, 100, 10);
 	-- End Menu Item Save
-	-- Menu Item Auto Cast
-		Support.optionSaveItemIcon = Menu.AddMenuIcon(Support, "Item Auto Cast");
-		Support.optionEnabledItemAutoCast = Menu.AddOptionBool({"Support", "Item Auto Cast"}, "Enabled", false);
-		Support.optionEnabledItemAutoCastPanel = Menu.AddKeyOption({"Support", "Item Auto Cast"}, "View Panel", Enum.ButtonCode.KEY_F);
-	-- End Menu Item Auto Cast
 	function Support.StartScript()
 		if myHero then
 			if(NPC.GetUnitName(myHero)=="npc_dota_hero_dazzle")then
-				Support.optionDazzle = Menu.AddMenuIcon({"Support"}, "Dazzle");
-				Support.optionEnabledDazzle = Menu.AddOptionBool({"Support", "Dazzle"}, "Enabled", false);
-				Support.optionEnabledGraveDazzle = Menu.AddOptionBool({"Support", "Dazzle", "Grave"}, "Enabled", false);
-				Support.optionCountEnemyGrave = Menu.AddOptionSlider({"Support","Dazzle", "Grave"}, "Health", 1, 99, 1);
-				Support.optionEnabledTeamView = Menu.AddOptionBool({"Support","Dazzle", "Team View"}, "Enabled", true);
-				Support.optionTeamViewX = Menu.AddOptionSlider({"Support","Dazzle", "Team View"}, "X", -Width, Width, 0);
-				Support.optionTeamViewY = Menu.AddOptionSlider({"Support","Dazzle", "Team View"}, "Y", -Height, Height, 0);
+				Support.optionEnabledDazzle = Menu.AddOptionBool({"Поддержка", "Dazzle"}, "Включить", false);
+				Support.optionEnabledGraveDazzle = Menu.AddOptionBool({"Поддержка", "Dazzle", "Grave"}, "Включить", false);
+				Support.optionCountEnemyGrave = Menu.AddOptionSlider({"Поддержка","Dazzle", "Grave"}, "Процент здоровья", 1, 99, 1);
+				Support.optionEnabledTeamView = Menu.AddOptionBool({"Поддержка","Dazzle", "Показать команду"}, "Включить", true);
+				Support.optionTeamViewX = Menu.AddOptionSlider({"Поддержка","Dazzle", "Показать команду"}, "X", -Width, Width, 0);
+				Support.optionTeamViewY = Menu.AddOptionSlider({"Поддержка","Dazzle", "Показать команду"}, "Y", -Height, Height, 0);
 				StatusTeamView=true;
 				return;
 			end
 			if(NPC.GetUnitName(myHero)=="npc_dota_hero_oracle")then
-				Support.optionOracleIcon = Menu.AddMenuIcon(Support, "Oracle");
-				Support.optionEnabledOracle = Menu.AddOptionBool({"Support", "Oracle"}, "Enabled", false);
-				Support.optionEnabledHealOracle = Menu.AddOptionBool({"Support", "Oracle", "Heal"}, "Enabled", false);
-				Support.optionEnabledTeamView = Menu.AddOptionBool({"Support","Oracle", "Team View"}, "Enabled", true);
-				Support.optionTeamViewX = Menu.AddOptionSlider({"Support","Oracle", "Team View"}, "X", -Width, Width, 0);
-				Support.optionTeamViewY = Menu.AddOptionSlider({"Support","Oracle", "Team View"}, "Y", -Height, Height, 0);
-				Support.optionCountEnemyHealOracle = Menu.AddOptionSlider({"Support","Oracle", "Heal"}, "Health percent", 1, 99, 1);
-				Support.optionEnabledAutoSaveOracle = Menu.AddOptionBool({"Support", "Oracle", "Auto Save"}, "Enabled", false);
-				Support.optionCountEnemyAutoSaveOracle = Menu.AddOptionSlider({"Support","Oracle", "Auto Save"}, "Health percent", 1, 99, 1);
-				Support.optionEnabledDamageOracle = Menu.AddOptionBool({"Support", "Oracle", "Damage combo"}, "Combo Enabled", false);
-				Support.optionEnabledOraclesComboDamage = Menu.AddKeyOption({"Support", "Oracle", "Damage combo"}, "Damage Key", Enum.ButtonCode.KEY_F);
+				Support.optionEnabledOracle = Menu.AddOptionBool({"Поддержка", "Oracle"}, "Включить", false);
+				Support.optionEnabledHealOracle = Menu.AddOptionBool({"Поддержка", "Oracle", "Heal"}, "Включить", false);
+				Support.optionEnabledTeamView = Menu.AddOptionBool({"Поддержка","Oracle", "Показать команду"}, "Включить", true);
+				Support.optionTeamViewX = Menu.AddOptionSlider({"Поддержка","Oracle", "Показать команду"}, "X", -Width, Width, 0);
+				Support.optionTeamViewY = Menu.AddOptionSlider({"Поддержка","Oracle", "Показать команду"}, "Y", -Height, Height, 0);
+				Support.optionCountEnemyHealOracle = Menu.AddOptionSlider({"Поддержка","Oracle", "Heal"}, "Процент здоровья", 1, 99, 1);
+				Support.optionEnabledAutoSaveOracle = Menu.AddOptionBool({"Поддержка", "Oracle", "Auto Save"}, "Включить", false);
+				Support.optionCountEnemyAutoSaveOracle = Menu.AddOptionSlider({"Поддержка","Oracle", "Auto Save"}, "Процент здоровья", 1, 99, 1);
+				Support.optionEnabledDamageOracle = Menu.AddOptionBool({"Поддержка", "Oracle", "Damage combo"}, "Combo Включить", false);
+				Support.optionEnabledOraclesComboDamage = Menu.AddKeyOption({"Поддержка", "Oracle", "Damage combo"}, "Damage Key", Enum.ButtonCode.KEY_F);
 				StatusTeamView=true;
 				return;
 			end
 			if(NPC.GetUnitName(myHero)=="npc_dota_hero_witch_doctor")then
-				Support.optionOracleIcon = Menu.AddMenuIcon(Support, "Doctor");
-				Support.optionEnabledDoctor = Menu.AddOptionBool({"Support", "Doctor"}, "Enabled", false);
-				Support.optionEnabledDoctorDamageCombo = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Enabled", false);
-				Support.optionEnabledDoctorDamageComboWard = Menu.AddOptionBool({"Support", "Doctor", "Damage combo"}, "Use Ward in combo?", false);
-				Support.optionEnabledDoctorDamageComboKey = Menu.AddKeyOption({"Support", "Doctor", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F);
-				Support.optionEnabledDoctorDamageComboItemGlimer = Menu.AddOptionBool({"Support", "Doctor", "Damage combo", "Item"}, "Glimmer", false);
-				return;
-			end
-			if(NPC.GetUnitName(myHero)=="npc_dota_hero_earthshaker")then
-				Support.optionEarthshakerIcon = Menu.AddMenuIcon(Support, "Earthshaker");
-				Support.optionEnabledEarthshaker = Menu.AddOptionBool({"Support", "Earthshaker"}, "Enabled", false);
-				Support.optionEnabledEarthshakerStopUltimate = Menu.AddOptionBool({"Support", "Earthshaker"}, "Ultimate control", false);
-				return;
-			end
-			if(NPC.GetUnitName(myHero)=="npc_dota_hero_undying")then
-				Support.optionUndying = Menu.AddMenuIcon(Support, "Undying");
-				Support.optionEnabledUndying = Menu.AddOptionBool({"Support", "Undying"}, "Enabled", false);
-				Support.optionEnabledUndyingAutoDecay = Menu.AddOptionBool({"Support", "Undying"}, "Auto Decay", false);
-				Support.optionCountUndyingAutoDecay = Menu.AddOptionSlider({"Support","Undying"}, "Count Hero (Auto Decay)", 1, 5, 2);
+				Support.optionEnabledDoctor = Menu.AddOptionBool({"Поддержка", "Doctor"}, "Включить", false);
+				Support.optionEnabledDoctorDamageCombo = Menu.AddOptionBool({"Поддержка", "Doctor", "Damage combo"}, "Включить", false);
+				Support.optionEnabledDoctorDamageComboWard = Menu.AddOptionBool({"Поддержка", "Doctor", "Damage combo"}, "Use Ward in combo?", false);
+				Support.optionEnabledDoctorDamageComboKey = Menu.AddKeyOption({"Поддержка", "Doctor", "Damage combo"}, "Combo Key", Enum.ButtonCode.KEY_F);
+				Support.optionEnabledDoctorDamageComboItemGlimer = Menu.AddOptionBool({"Поддержка", "Doctor", "Damage combo", "Item"}, "Glimmer", false);
 				return;
 			end
 		end
@@ -151,109 +130,6 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 				end
 			end
 			-- End Team View
-			-- Item Auto Cast
-			if Menu.IsEnabled(Support.optionEnabledItemAutoCast) then
-				if MenuItemList[1].view then
-					local x = MenuItemList[1].posX;
-					local y = MenuItemList[1].posY;
-					local MousX,MousY = Input.GetCursorPos();
-					Renderer.SetDrawColor(159, 0, 61, 250);
-					Renderer.DrawFilledRect(x, y-20, 200, 20);
-					Renderer.SetDrawColor(0, 0, 0, 150);
-					Renderer.DrawFilledRect(x, y, 200, 240);
-					Renderer.DrawFilledRect(x, y+250, 200, 40);
-					local PosIcon = 0;
-					for i = 1, #SupportItemList do
-						if SupportItemList[i].status then
-							if SupportItemList[i].active then
-								Renderer.SetDrawColor(255, 255, 255, 255);
-							else
-								Renderer.SetDrawColor(255, 255, 255, 150);
-							end
-							Renderer.DrawImage(SupportItemList[i].image, x+PosIcon, y+250, 40, 40);
-							PosIcon=PosIcon+42;
-						end
-					end
-					PosIcon = 0;
-					Renderer.SetDrawColor(255, 255, 255, 255);
-					if #EnemyTeam then
-						for i = 1, #EnemyTeam do
-							local PosIcoY = 40;
-							Renderer.DrawImage(EnemyTeam[i].icon, x+PosIcon, y, 40, 40);
-							for j = 1, #SupportItemList do
-								if #SupportItemList[j].hero then
-									for k = 1, #SupportItemList[j].hero do
-										if SupportItemList[j].hero[k] == EnemyTeam[i].Hero then
-											Renderer.DrawImage(SupportItemList[j].image, x+PosIcon, y+PosIcoY, 40, 40);
-											if (MousX>=x+PosIcon and MousX<=x+PosIcon+40) and (MousY>=y+PosIcoY and MousY<=y+PosIcoY+40) then
-												if (Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1)) then
-													if SupportItemList[j].status then
-														SupportItemList[j].hero[k]=nil;
-													end
-												end
-											end
-											PosIcoY=PosIcoY+40;
-										end
-									end
-								end
-							end
-							PosIcon=PosIcon+40;
-						end
-					end
-					if (MousX>=x and MousX<=x+200) and (MousY>=y and MousY<=y+40) then
-						if (Input.IsKeyDownOnce(Enum.ButtonCode.KEY_MOUSE1)) then
-							local PosCursorIcon = 40; 
-							for i = 1, #EnemyTeam do
-								if (MousX-(x+PosCursorIcon))<=0 then
-									for j = 1, #SupportItemList do
-										if SupportItemList[j].active then
-											if #SupportItemList[j].hero then
-												local HeroCheker=true;
-												for k = 1, #SupportItemList[j].hero do
-													if SupportItemList[j].hero[k]== EnemyTeam[i].Hero then
-														HeroCheker = false;
-														SupportItemList[j].active = false;
-													end
-												end
-												if HeroCheker then
-													SupportItemList[j].hero[#SupportItemList[j].hero+1]=EnemyTeam[i].Hero;
-													SupportItemList[j].active = false;
-												end
-											end
-										end
-									end
-								end
-								PosCursorIcon=PosCursorIcon+40;
-							end
-						end
-					end
-					if (MousX>=x and MousX<=x+200) and (MousY>=y+250 and MousY<=y+290) then
-						if (Input.IsKeyDownOnce(Enum.ButtonCode.KEY_MOUSE1)) then
-							local PosCursorIcon = 40; 
-							for i = 1, #SupportItemList do
-								if SupportItemList[i].status then
-									if (MousX-(x+PosCursorIcon))<=0 then
-											if SupportItemList[i].active then
-												SupportItemList[i].active=false;
-											else
-												SupportItemList[i].active=true;
-											end
-											break;
-									end
-									PosCursorIcon=PosCursorIcon+40;
-								end
-							end
-						end
-					end
-					if (MousX>=x and MousX<=x+200) and (MousY>=y-20 and MousY<=y) then
-						if (Input.IsKeyDown(Enum.ButtonCode.KEY_MOUSE1)) then
-							MenuItemList[1].posX = MousX-100;
-							MenuItemList[1].posY = MousY+10;
-						end
-					end
-				end
-			end
-			-- End Item Auto Cast
 		end
 	end
 -- End drawing
@@ -269,14 +145,6 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 				TimerUpdate1s=TimerGameSec+1;
 			end
 			-- End Update 1s
-			-- Update 0.2s
-			if Menu.IsEnabled(Support.optionAntiPauseEnabled) then
-				if TimerUpdateAntPause <= TimerGameSec then
-					Support.AntiPause();
-					TimerUpdateAntPause=TimerGameSec+0.2;
-				end
-			end
-			-- End Update 0.2s
 			--Dazzle Script
 			if (NPC.GetUnitName(myHero)=="npc_dota_hero_dazzle") then
 				if Menu.IsEnabled(Support.optionEnabledDazzle) then
@@ -422,33 +290,7 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 				end
 			end
 			-- End Doctor
-			-- Undying
-			if (NPC.GetUnitName(myHero)=="npc_dota_hero_undying") then
-				if Menu.IsEnabled(Support.optionEnabledUndying) then
-					local Decay = NPC.GetAbility(myHero, "undying_decay");
-					if Entity.IsAlive(myHero) and Decay then
-						if Menu.IsEnabled(Support.optionEnabledUndyingAutoDecay) then
-							local HeroRadius = Entity.GetHeroesInRadius(myHero, Ability.GetCastRange(Decay), Enum.TeamType.TEAM_ENEMY);
-							if #HeroRadius > 0 then
-								for i = 1, #HeroRadius do
-									local EnemyHeroRadius = Entity.GetHeroesInRadius(HeroRadius[i], 300, Enum.TeamType.TEAM_FRIEND);
-									if #EnemyHeroRadius >= Menu.GetValue(Support.optionCountUndyingAutoDecay) then
-										Support.CastDamageSpell(Decay,HeroRadius[i],false);
-									end
-								end
-							end
-						end
-					end
-				end
-			end
-			-- End Undying
 			-- Item Script
-			if Menu.IsEnabled(Support.optionEnabledItemAutoCast) then
-				Support.AutoCastItem();
-				if Menu.IsKeyDownOnce(Support.optionEnabledItemAutoCastPanel) then
-					MenuItemList[1].view=not(MenuItemList[1].view);
-				end
-			end	
 			if Menu.IsEnabled(Support.optionEnabledItemSave) then
 				Support.SaveItem();
 			end	
@@ -456,37 +298,7 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 		end
 	end
 -- End Main
--- Use ability
-	function Support.OnPrepareUnitOrders(orders)
-		-- Earthshaker
-		if myHero then
-			if (NPC.GetUnitName(myHero)=="npc_dota_hero_earthshaker") then
-				local EchoSlam = NPC.GetAbility(myHero, "earthshaker_echo_slam");
-				if Menu.IsEnabled(Support.optionEnabledEarthshaker) then
-					if Menu.IsEnabled(Support.optionEnabledEarthshakerStopUltimate) then
-						if EchoSlam == orders.ability then
-							local BadHerolist = Entity.GetHeroesInRadius(myHero, 600, Enum.TeamType.TEAM_ENEMY)
-							if #BadHerolist==0 then
-								return false;
-							else
-								return true;
-							end
-						end
-					end
-				end
-			end
-		end
-		-- End Earthshaker
-	end
--- End Use ability
 -- Content
-	-- Anti pause
-		function Support.AntiPause()
-			if (GameRules.IsPaused()) then
-				Engine.ExecuteCommand("dota_pause");
-			end
-		end
-	-- End Anti pause
 	-- Cast Damage Spell
 		function Support.CastDamageSpell(Spell,Target,TypeSpell)
 			if NPC.IsEntityInRange(myHero, Target, Ability.GetCastRange(Spell)) then
