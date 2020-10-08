@@ -45,13 +45,19 @@ Height = math.floor(Height/5*3);
 					end
 					Renderer.DrawImage(FriendlyTeam[i].icon, x+PosIconX, y, 28, 28);
 					for j = 1, #FriendlyTeam[i].AbilityList do
-						if FriendlyTeam[i].AbilityList[j].status then
-							Renderer.SetDrawColor(255, 255, 255, 255);
-						else
-							Renderer.SetDrawColor(255, 255, 255, 50);
+						if Ability.GetLevel(FriendlyTeam[i].AbilityList[j].ability)>=1 and Ability.GetCastRange(FriendlyTeam[i].AbilityList[j].ability)>1 then
+							if not(FriendlyTeam[i].AbilityList[j].icon) then
+								FriendlyTeam[i].AbilityList[j].icon = Renderer.LoadImage("panorama/images/spellicons/"..Ability.GetName(FriendlyTeam[i].AbilityList[j].ability).."_png.vtex_c");
+							end
+							if FriendlyTeam[i].AbilityList[j].status then
+								Renderer.SetDrawColor(255, 255, 255, 255);
+							else
+								Renderer.SetDrawColor(255, 255, 255, 50);
+							end
+							Renderer.DrawImage(FriendlyTeam[i].AbilityList[j].icon, x+PosIconX, y+PosIconY, 28, 28);
+							PosIconY=PosIconY+30
+							
 						end
-						Renderer.DrawImage(FriendlyTeam[i].AbilityList[j].icon, x+PosIconX, y+PosIconY, 28, 28);
-						PosIconY=PosIconY+30
 					end
 					PosIconX=PosIconX+30;
 				end
@@ -67,15 +73,17 @@ Height = math.floor(Height/5*3);
 							if (MousX-(x+PosCursorIcon))<=0 then
 								local PosCursorIconY = 60; 
 								for j = 1, #FriendlyTeam[i].AbilityList do
-									if (MousY-(y+PosCursorIconY))<=0 then
-										if FriendlyTeam[i].AbilityList[j].status then
-											FriendlyTeam[i].AbilityList[j].status=false;
-										else
-											FriendlyTeam[i].AbilityList[j].status=true;
+									if Ability.GetLevel(FriendlyTeam[i].AbilityList[j].ability)>=1 and Ability.GetCastRange(FriendlyTeam[i].AbilityList[j].ability)>1  then
+										if (MousY-(y+PosCursorIconY))<=0 then
+											if FriendlyTeam[i].AbilityList[j].status then
+												FriendlyTeam[i].AbilityList[j].status=false;
+											else
+												FriendlyTeam[i].AbilityList[j].status=true;
+											end
+											break;
 										end
-										break;
+										PosCursorIconY=PosCursorIconY+30;
 									end
-									PosCursorIconY=PosCursorIconY+30;
 								end
 								break;
 							end
@@ -102,13 +110,18 @@ Height = math.floor(Height/5*3);
 					end
 					Renderer.DrawImage(EnemyTeam[i].icon, x+PosIconX, y, 28, 28);
 					for j = 1, #EnemyTeam[i].AbilityList do
-						if EnemyTeam[i].AbilityList[j].status then
-							Renderer.SetDrawColor(255, 255, 255, 255);
-						else
-							Renderer.SetDrawColor(255, 255, 255, 50);
+						if Ability.GetLevel(EnemyTeam[i].AbilityList[j].ability)>=1 and Ability.GetCastRange(EnemyTeam[i].AbilityList[j].ability)>1  then
+							if not(EnemyTeam[i].AbilityList[j].icon) then
+								EnemyTeam[i].AbilityList[j].icon = Renderer.LoadImage("panorama/images/spellicons/"..Ability.GetName(EnemyTeam[i].AbilityList[j].ability).."_png.vtex_c");
+							end
+							if EnemyTeam[i].AbilityList[j].status then
+								Renderer.SetDrawColor(255, 255, 255, 255);
+							else
+								Renderer.SetDrawColor(255, 255, 255, 50);
+							end
+							Renderer.DrawImage(EnemyTeam[i].AbilityList[j].icon, x+PosIconX, y+PosIconY, 28, 28);
+							PosIconY=PosIconY+30
 						end
-						Renderer.DrawImage(EnemyTeam[i].AbilityList[j].icon, x+PosIconX, y+PosIconY, 28, 28);
-						PosIconY=PosIconY+30
 					end
 					PosIconX=PosIconX+30;
 				end
@@ -123,15 +136,17 @@ Height = math.floor(Height/5*3);
 							if (MousX-(x+PosCursorIcon))<=0 then
 								local PosCursorIconY = 60; 
 								for j = 1, #EnemyTeam[i].AbilityList do
-									if (MousY-(y+PosCursorIconY))<=0 then
-										if EnemyTeam[i].AbilityList[j].status then
-											EnemyTeam[i].AbilityList[j].status=false;
-										else
-											EnemyTeam[i].AbilityList[j].status=true;
+									if Ability.GetLevel(EnemyTeam[i].AbilityList[j].ability)>=1 and Ability.GetCastRange(EnemyTeam[i].AbilityList[j].ability)>1  then
+										if (MousY-(y+PosCursorIconY))<=0 then
+											if EnemyTeam[i].AbilityList[j].status then
+												EnemyTeam[i].AbilityList[j].status=false;
+											else
+												EnemyTeam[i].AbilityList[j].status=true;
+											end
+											break;
 										end
-										break;
+										PosCursorIconY=PosCursorIconY+30;
 									end
-									PosCursorIconY=PosCursorIconY+30;
 								end
 								break;
 							end
@@ -155,7 +170,7 @@ Height = math.floor(Height/5*3);
 				if TimerUpdate1s <= TimerGameSec then
 					CustomRadius.GetHeroList();
 					CustomRadius.CreateParticle();
-					CustomRadius.UpdateAbilHero();
+					--CustomRadius.UpdateAbilHero();
 					TimerUpdate1s=TimerGameSec+1;
 				end
 				CustomRadius.UpdateParticle();
@@ -170,7 +185,7 @@ Height = math.floor(Height/5*3);
 				local AbilityList = CustomRadius.GetAbilityList(FriendlyTeam[i].Hero);
 				if #AbilityList > #FriendlyTeam[i].AbilityList then
 					for j = 1, #FriendlyTeam[i].AbilityList do
-						if FriendlyTeam[i].AbilityList[j].part then
+						if FriendlyTeam[i].AbilityList[j].status then
 							Particle.Destroy(FriendlyTeam[i].AbilityList[j].part);
 						end
 					end
@@ -183,7 +198,7 @@ Height = math.floor(Height/5*3);
 				local AbilityList = CustomRadius.GetAbilityList(EnemyTeam[i].Hero);
 				if #AbilityList > #EnemyTeam[i].AbilityList then
 					for j = 1, #EnemyTeam[i].AbilityList do
-						if EnemyTeam[i].AbilityList[j].part then
+						if FriendlyTeam[i].AbilityList[j].status then
 							Particle.Destroy(EnemyTeam[i].AbilityList[j].part);
 						end
 					end
@@ -311,8 +326,8 @@ Height = math.floor(Height/5*3);
 				local abilityList={}
 				for i = 0, 14 do
 					local abili = NPC.GetAbilityByIndex(hero, i);
-					if abili and not Ability.IsHidden(abili) and Ability.GetCastRange(abili) > 0  then
-						abilityList[#abilityList+1] = {ability = abili, icon = Renderer.LoadImage("panorama/images/spellicons/"..Ability.GetName(abili).."_png.vtex_c"), abCastRange = Ability.GetCastRange(abili)+NPC.GetHullRadius(hero), part = nil, status=false};
+					if abili and not(Ability.IsAttributes(abili)) then
+						abilityList[#abilityList+1] = {ability = abili, icon = nil, abCastRange = Ability.GetCastRange(abili)+NPC.GetHullRadius(hero), part = nil, status=false};
 					end
 				end
 				return abilityList;
