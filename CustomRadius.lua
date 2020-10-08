@@ -63,7 +63,7 @@ Height = math.floor(Height/5*3);
 				end
 				
 				local sizeX = PosIconX+5;
-				local sizeY = PosIconY+5;
+				local sizeY = 170;
 				Renderer.SetDrawColor(0, 0, 0, 150);
 				Renderer.DrawFilledRect(x-4, y-3, sizeX, sizeY)
 				if (MousX>=x and MousX<=x+sizeX) and (MousY>=y and MousY<=y+sizeY) then
@@ -126,7 +126,7 @@ Height = math.floor(Height/5*3);
 					PosIconX=PosIconX+30;
 				end
 				local sizeX = PosIconX+5;
-				local sizeY = PosIconY+5;
+				local sizeY = 170;
 				Renderer.SetDrawColor(0, 0, 0, 150);
 				Renderer.DrawFilledRect(x-4, y-3, sizeX, sizeY)
 				if (MousX>=x and MousX<=x+sizeX) and (MousY>=y and MousY<=y+sizeY) then
