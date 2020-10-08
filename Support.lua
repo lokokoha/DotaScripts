@@ -87,6 +87,15 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 				Support.optionEnabledDoctorDamageComboItemGlimer = Menu.AddOptionBool({"Поддержка", "Doctor", "Damage combo", "Item"}, "Glimmer", false);
 				return;
 			end
+			if(NPC.GetUnitName(myHero)=="npc_dota_hero_dark_willow")then
+				Support.optionEnabledWillow = Menu.AddOptionBool({"Поддержка", "Dark Willow"}, "Включить", false);
+				Support.optionEnabledWillowDamageCombo = Menu.AddOptionBool({"Поддержка", "Dark Willow", "Комбо"}, "Включить", false);
+				Support.optionEnabledWillowDamageComboRealm = Menu.AddOptionBool({"Поддержка", "Dark Willow", "Комбо"}, "Использование SH Realm", false);
+				Support.optionEnabledWillowSave = Menu.AddOptionBool({"Поддержка", "Dark Willow", "Авто спасение"}, "Включить", false);
+				Support.optionCountEnemyWillowSave = Menu.AddOptionSlider({"Поддержка","Dark Willow", "Авто спасение"}, "Процент здоровья", 1, 99, 1);
+				Support.optionEnabledWillowDamageComboKey = Menu.AddKeyOption({"Поддержка", "Dark Willow", "Комбо"}, "Кнопка для комбо", Enum.ButtonCode.KEY_F);
+				return;
+			end
 		end
 	end
 -- End Menu
@@ -290,6 +299,39 @@ SupportItemList[11] = {name = "item_heavens_halberd", status = false, item = nil
 				end
 			end
 			-- End Doctor
+			-- Dark Willow
+			if NPC.GetUnitName(myHero)=="npc_dota_hero_dark_willow" then
+				if Menu.IsEnabled(Support.optionEnabledWillow) and Entity.IsAlive(myHero) then
+					local Maze = NPC.GetAbility(myHero, "dark_willow_bramble_maze");
+					local Realm = NPC.GetAbility(myHero, "dark_willow_shadow_realm");
+					local Crown = NPC.GetAbility(myHero, "dark_willow_cursed_crown");
+					local Bedlam = NPC.GetAbility(myHero, "dark_willow_bedlam");
+					-- local Terrorize = NPC.GetAbility(myHero, "dark_willow_terrorize");
+					if Menu.IsEnabled(Support.optionEnabledWillowDamageCombo) and Menu.IsKeyDown(Support.optionEnabledWillowDamageComboKey) then
+						local target=Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY);
+						Support.CastDamageSpell(Maze,target,false);
+						Support.CastDamageSpell(Crown,target,true);
+						if Ability.IsCastable(Bedlam, NPC.GetMana(myHero), false) then
+							if Heroes.InRadius(Entity.GetOrigin(target), 200, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+								Ability.CastNoTarget(Bedlam, false);
+							end
+						end
+						if Ability.IsCastable(Realm, NPC.GetMana(myHero), false) then
+							if Menu.IsEnabled(Support.optionEnabledWillowDamageComboRealm) then
+								if Heroes.InRadius(Entity.GetOrigin(target), 600, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) then
+									Ability.CastNoTarget(Realm, false);
+								end
+							end
+						end
+					end
+					if Menu.IsEnabled(Support.optionEnabledWillowSave) and ((Entity.GetMaxHealth(myHero)*0.01)*Menu.GetValue(Support.optionCountEnemyWillowSave) >= Entity.GetHealth(myHero)) and Entity.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_ENEMY) then
+						if Ability.IsCastable(Realm, NPC.GetMana(myHero), false) then
+							Ability.CastNoTarget(Realm, true);
+						end
+					end
+				end
+			end
+			-- End Dark Willow
 			-- Item Script
 			if Menu.IsEnabled(Support.optionEnabledItemSave) then
 				Support.SaveItem();
